@@ -10,7 +10,7 @@ const Content = (props) => {
   const allParts = [];
 
   props.parts.forEach((x, i) => {
-    let element = <Part part={x} exercise={props.exercises[i]} />;
+    const element = <Part key={i + "_partKey"} part={x} exercise={props.exercises[i]} />;
     allParts.push(element);
   });
 
