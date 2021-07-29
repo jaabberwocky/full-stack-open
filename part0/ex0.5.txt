@@ -1,0 +1,10 @@
+// meant for web sequence diagrams: https://www.websequencediagrams.com/
+title Submit SPA
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over browser:
+browser updates the html using spa.js
+this updates the data without calling for it from the
+server again
+end note
