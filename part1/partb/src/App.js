@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 
 const Hello = ({ name, age }) => {
-  // directly assign to const
-  // using destructuring
-
   const bornYear = () => new Date().getFullYear() - age + myState.ageDiff;
 
   const initialState = {
