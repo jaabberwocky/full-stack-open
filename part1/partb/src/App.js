@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 
 const Hello = ({ name, age }) => {
   // directly assign to const
@@ -7,7 +7,7 @@ const Hello = ({ name, age }) => {
   const bornYear = () => new Date().getFullYear() - age + ageDiff;
   const [ageDiff, ageIncrement] = useState(0);
 
-  // increases age 
+  // increases age
   // setTimeout(() => ageIncrement(ageDiff + 1), 1000);
 
   return (
@@ -27,9 +27,10 @@ const App = () => {
   const name = "Peter";
   const age = 10;
 
+  // using a state variable
   const initialState = {
     counter: 0,
-  }
+  };
   const [myState, setMyState] = useState(initialState);
 
   console.log("rendering...", myState.counter);
@@ -37,10 +38,16 @@ const App = () => {
     <div>
       <h1>Greetings</h1>
       <h2>{myState.counter}</h2>
-      <button onClick={() => setMyState({
-        ...myState,
-        counter: myState.counter + 1
-      })}>Click!</button>
+      <button
+        onClick={() =>
+          setMyState({
+            ...myState,
+            counter: myState.counter + 1,
+          })
+        }
+      >
+        Click!
+      </button>
       <Hello name="Maya" age={26 + 10} />
       <Hello name={name} age={age} />
     </div>
