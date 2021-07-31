@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import useKeypress from "react-use-keypress";
 
 const Hello = ({ name, age, counter }) => {
   const bornYear = () => new Date().getFullYear() - age + counter;
@@ -15,6 +16,14 @@ const Hello = ({ name, age, counter }) => {
   );
 };
 
+const Key = ({ keyHistory }) => {
+  return (
+    <div>
+      <p>Key History: {keyHistory.join(" ")}</p>
+    </div>
+  );
+};
+
 const App = () => {
   const name = "Peter";
   const age = 10;
@@ -22,6 +31,7 @@ const App = () => {
   const initialState = {
     counter: 0,
     greeting: "Greetings",
+    keyHistory: [],
   };
   const [myState, setMyState] = useState(initialState);
 
@@ -34,6 +44,34 @@ const App = () => {
     console.log("Mouse leave detected...");
     setMyState({ ...myState, greeting: "Greetings" });
   };
+
+  useEffect(
+    () => {
+      console.log(`Updating title to ${myState.counter}...`);
+      document.title = `Current counter: ${myState.counter}`;
+    },
+    // only update if myState.counter changes
+    [myState.counter]
+  );
+
+  useKeypress(["ArrowLeft", "ArrowRight"], (e) => {
+    let arr = myState.keyHistory;
+    if (e.key === "ArrowLeft") {
+      arr.push("L");
+      setMyState({ ...myState, keyHistory: arr });
+    } else {
+      arr.push("R");
+      setMyState({ ...myState, keyHistory: arr });
+    }
+  });
+
+  useKeypress(["ArrowUp", "ArrowDown"], (e) => {
+    // TODO: possible to do multiple key combinations??
+    if (e.key === "ArrowUp" && e.key === "ArrowDown") {
+      console.log("Resetting key history...");
+      setMyState({ ...myState, keyHistory: [] });
+    }
+  });
 
   console.log("rendering...", myState.counter);
   return (
@@ -56,9 +94,21 @@ const App = () => {
       >
         Increase
       </button>
-      <button onClick={() => setMyState(initialState)}>Reset</button>
+      <button
+        onClick={() =>
+          setMyState({ ...initialState, keyHistory: myState.keyHistory })
+        }
+      >
+        Reset
+      </button>
       <Hello name="Maya" age={26 + 10} counter={myState.counter} />
       <Hello name={name} age={age} counter={myState.counter} />
+      <hr />
+      <p>
+        Press LeftArrow or RightArrow on keyboard to enter key history. Press
+        UpArrow to reset history.
+      </p>
+      <Key keyHistory={myState.keyHistory} />
     </div>
   );
 };
