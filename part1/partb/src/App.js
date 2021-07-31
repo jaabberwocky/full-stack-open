@@ -1,28 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useKeypress from "react-use-keypress";
-
-const Hello = ({ name, age, counter }) => {
-  const bornYear = () => new Date().getFullYear() - age + counter;
-
-  return (
-    <div>
-      <p>
-        Hello {name}, you are {age + counter} years old. ageDiff:{counter}
-      </p>
-      <p>
-        <b>So you were probably born in {bornYear()}</b>
-      </p>
-    </div>
-  );
-};
-
-const Key = ({ keyHistory }) => {
-  return (
-    <div>
-      <p>Key History: {keyHistory.join(" ")}</p>
-    </div>
-  );
-};
+import { Key } from "./Key.js";
+import { Hello } from "./Hello.js";
 
 const App = () => {
   const name = "Peter";
@@ -37,7 +16,7 @@ const App = () => {
 
   const handleMouseEnter = () => {
     console.log("Mouse enter detected...");
-    setMyState({ ...myState, greeting: "MOUSEOVER" });
+    setMyState({ ...myState, greeting: <u>{"MOUSEOVER"}</u> });
   };
 
   const handleMouseLeave = () => {
@@ -65,9 +44,9 @@ const App = () => {
     }
   });
 
-  useKeypress(["ArrowUp", "ArrowDown"], (e) => {
+  useKeypress("q", (e) => {
     // TODO: possible to do multiple key combinations??
-    if (e.key === "ArrowUp" && e.key === "ArrowDown") {
+    if (myState.keyHistory.length > 0) {
       console.log("Resetting key history...");
       setMyState({ ...myState, keyHistory: [] });
     }
@@ -96,6 +75,7 @@ const App = () => {
       </button>
       <button
         onClick={() =>
+          // retains keyHistory when "resetting"
           setMyState({ ...initialState, keyHistory: myState.keyHistory })
         }
       >
@@ -104,10 +84,8 @@ const App = () => {
       <Hello name="Maya" age={26 + 10} counter={myState.counter} />
       <Hello name={name} age={age} counter={myState.counter} />
       <hr />
-      <p>
-        Press LeftArrow or RightArrow on keyboard to enter key history. Press
-        UpArrow to reset history.
-      </p>
+      <p>Press LeftArrow or RightArrow on keyboard to enter key history.</p>
+      <p>Press q to reset history.</p>
       <Key keyHistory={myState.keyHistory} />
     </div>
   );
