@@ -4,21 +4,28 @@ const Hello = ({ name, age }) => {
   // directly assign to const
   // using destructuring
 
-  const bornYear = () => new Date().getFullYear() - age + ageDiff;
-  const [ageDiff, ageIncrement] = useState(0);
+  const bornYear = () => new Date().getFullYear() - age + myState.ageDiff;
+
+  const initialState = {
+    ageDiff: 0,
+  };
+  const [myState, setMyState] = useState(initialState);
 
   // increases age
-  // setTimeout(() => ageIncrement(ageDiff + 1), 1000);
+  setTimeout(
+    () => setMyState({ ...myState, ageDiff: myState.ageDiff + 1 }),
+    2000
+  );
 
   return (
     <div>
       <p>
-        Hello {name}, you are {age + ageDiff} years old
+        Hello {name}, you are {age + myState.ageDiff} years old. ageDiff:{" "}
+        {myState.ageDiff}
       </p>
       <p>
         <b>So you were probably born in {bornYear()}</b>
       </p>
-      <button onClick={() => ageIncrement(0)}>Reset age diff</button>
     </div>
   );
 };
@@ -27,16 +34,32 @@ const App = () => {
   const name = "Peter";
   const age = 10;
 
-  // using a state variable
   const initialState = {
     counter: 0,
+    greeting: "Greetings",
   };
   const [myState, setMyState] = useState(initialState);
+
+  const handleMouseEnter = () => {
+    console.log("Mouse enter detected...")
+    setMyState({...myState, greeting: "MOUSEOVER"})
+  }
+
+  const handleMouseLeave = () => {
+    console.log("Mouse leave detected...")
+    setMyState({...myState, greeting: "Greetings"})
+  }
 
   console.log("rendering...", myState.counter);
   return (
     <div>
-      <h1>Greetings</h1>
+      <h1
+        id="title"
+        onMouseEnter={() => handleMouseEnter()}
+        onMouseLeave={() => handleMouseLeave()}
+      >
+        {myState.greeting}
+      </h1>
       <h2>{myState.counter}</h2>
       <button
         onClick={() =>
