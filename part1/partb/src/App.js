@@ -55,8 +55,8 @@ const App = () => {
     <div>
       <h1
         id="title"
-        onMouseEnter={() => handleMouseEnter()}
-        onMouseLeave={() => handleMouseLeave()}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {myState.greeting}
       </h1>
