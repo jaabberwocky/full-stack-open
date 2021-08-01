@@ -11,7 +11,16 @@ const App = () => {
     "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when dianosing patients",
   ];
 
+  const generateInitialVotes = () => {
+    let votes = {}
+    for (let i = 0; i < anecdotes.length; i++) {
+      votes[i] = 0
+    }
+    return votes
+  }
+
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(generateInitialVotes())
 
   const handleNext = () => {
     while (true) {
@@ -25,10 +34,17 @@ const App = () => {
     }
   };
 
+  const handleVote = () => {
+    setVotes({...votes, [selected]:  votes[selected] + 1})
+  }
+
   return (
     <div>
-      {anecdotes[selected]}
+      Anecdote #{selected}: {anecdotes[selected]}
       <br />
+      has {votes[selected]} votes
+      <br />
+      <button onClick={handleVote}>vote</button>
       <button onClick={handleNext}>next anecdote</button>
     </div>
   );
