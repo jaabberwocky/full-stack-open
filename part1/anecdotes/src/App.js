@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { shuffle } from "./utils";
+import React, { useState } from "react";
 
 const App = () => {
   const anecdotes = [
@@ -13,15 +12,17 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
-  const [remainingCandidates, setRemainingCandidates] = useState(
-    shuffle([...Array(anecdotes.length).keys()])
-  );
 
   const handleNext = () => {
-    let candidate = remainingCandidates.slice(-1)[0];
-    console.log("Candidate: ", candidate);
-    setRemainingCandidates(remainingCandidates.slice(0, -1));
-    setSelected(candidate);
+    while (true) {
+      let candidate = Math.floor(Math.random() * anecdotes.length);
+      if (candidate !== selected) {
+        setSelected(candidate);
+        break;
+      } else {
+        console.log("Same candidate, repicking!")
+      }
+    }
   };
 
   return (
