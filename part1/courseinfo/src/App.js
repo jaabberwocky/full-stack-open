@@ -28,7 +28,7 @@ const App = () => {
         {
           name: "Routing",
           exercises: 3,
-          id: 1,
+          id: 1, 
         },
         {
           name: "Middlewares",
