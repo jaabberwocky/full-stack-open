@@ -69,7 +69,6 @@ const App = () => {
 
   const [stats, setStats] = useState(initialStats);
 
-  // lift state up to app component
   useEffect(() => {
     if (firstUpdate.current) {
       // skip first render
