@@ -81,8 +81,8 @@ const App = () => {
 
       setStats({
         all: all,
-        average: average,
-        positivePercentage: positivePercentage,
+        average: average.toFixed(2),
+        positivePercentage: positivePercentage.toFixed(2),
       });
     }
   }, [good, neutral, bad]);
