@@ -8,7 +8,6 @@ const Content = (props) => {
   // using a loop to iterate through all the
   // props given in arrays (parts, exercises)
   const allParts = [];
-
   props.parts.forEach((x, i) => {
     const element = (
       <Part key={i + "_key"} part={x["name"]} exercise={x["exercises"]} />
@@ -28,8 +27,18 @@ const Part = (props) => {
 };
 
 const Total = (props) => {
-  const total = props.parts.reduce((acc, val) => acc + val['exercises'], 0);
-  return <p>Number of exercises {total}</p>;
+  const total = props.parts.reduce((acc, val) => acc + val["exercises"], 0);
+  return <b>total of {total} exercises</b>;
+};
+
+const Course = ({ course, parts }) => {
+  return (
+    <div>
+      <Header course={course} />
+      <Content parts={parts} />
+      <Total parts={parts} />
+    </div>
+  );
 };
 
 const App = () => {
@@ -49,11 +58,13 @@ const App = () => {
     },
   ];
 
+  const course2 = "Frontend development course";
+
   return (
     <div>
-      <Header course={course} />
-      <Content parts={parts} />
-      <Total parts={parts} />
+      {document.title = "Course Info"}
+      <Course course={course} parts={parts} />
+      <Course course={course2} parts={[]} />
     </div>
   );
 };
