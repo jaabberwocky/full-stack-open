@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const App = () => {
   const anecdotes = [
@@ -12,15 +12,17 @@ const App = () => {
   ];
 
   const generateInitialVotes = () => {
-    let votes = {}
+    let votes = {};
     for (let i = 0; i < anecdotes.length; i++) {
-      votes[i] = 0
+      votes[i] = 0;
     }
-    return votes
-  }
+    return votes;
+  };
 
   const [selected, setSelected] = useState(0);
-  const [votes, setVotes] = useState(generateInitialVotes())
+  const [votes, setVotes] = useState(generateInitialVotes());
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [mostVotes, setMostVotes] = useState(null);
 
   const handleNext = () => {
     while (true) {
@@ -29,24 +31,64 @@ const App = () => {
         setSelected(candidate);
         break;
       } else {
-        console.log("Same candidate, repicking!")
+        console.log("Same candidate, repicking!");
       }
     }
   };
 
   const handleVote = () => {
-    setVotes({...votes, [selected]:  votes[selected] + 1})
-  }
+    setTotalVotes(totalVotes + 1);
+    setVotes({ ...votes, [selected]: votes[selected] + 1 });
+  };
+
+  useEffect(() => {
+    const getHighestVotes = () => {
+      let highestCount = 0;
+      let highest = null;
+
+      for (let el in votes) {
+        if (votes[el] > highestCount) {
+          highestCount = votes[el];
+          highest = el;
+        }
+      }
+
+      return highest;
+    };
+    if (totalVotes !== 0) {
+      setMostVotes(getHighestVotes());
+    }
+  }, [votes, totalVotes]);
 
   return (
     <div>
-      Anecdote #{selected}: {anecdotes[selected]}
-      <br />
-      has {votes[selected]} votes
-      <br />
+      <h1>Anecdote of the day</h1>
+      <Anecdote
+        selected={selected}
+        anecdote={anecdotes[selected]}
+        vote={votes[selected]}
+      />
       <button onClick={handleVote}>vote</button>
       <button onClick={handleNext}>next anecdote</button>
+      <br/>
+      <h1>Anecdote with most votes</h1>
+      <Anecdote
+        selected={mostVotes}
+        anecdote={anecdotes[mostVotes]}
+        vote={votes[mostVotes]}
+      />
     </div>
+  );
+};
+
+const Anecdote = ({ selected, anecdote, vote }) => {
+  return (
+    <React.Fragment>
+      Anecdote #{selected}: {anecdote}
+      <br />
+      has {vote} votes
+      <br />
+    </React.Fragment>
   );
 };
 
