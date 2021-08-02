@@ -11,12 +11,41 @@ const Entry = ({ person }) => {
 };
 
 const PersonForm = ({
-  addNewEntry,
+  persons,
+  setPersons,
+  setNewName,
+  setNewNumber,
   newName,
-  handleNameChange,
   newNumber,
-  handleNumberChange,
 }) => {
+  const addNewEntry = (event) => {
+    event.preventDefault();
+    const nameObject = {
+      name: newName,
+      number: newNumber,
+    };
+
+    for (let el of persons) {
+      if (nameObject.name === el.name) {
+        alert(`${nameObject.name} is already added to phonebook`);
+        setNewName("");
+        setNewNumber("");
+        return;
+      }
+    }
+    setPersons(persons.concat(nameObject));
+    setNewName("");
+    setNewNumber("");
+  };
+
+  const handleNameChange = (event) => {
+    setNewName(event.target.value);
+  };
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value);
+  };
+
   return (
     <div>
       <form onSubmit={addNewEntry}>
@@ -32,7 +61,11 @@ const PersonForm = ({
   );
 };
 
-const Filter = ({ filterTerm, setFilterTerm, handleFilterChange }) => {
+const Filter = ({ filterTerm, setFilterTerm }) => {
+  const handleFilterChange = (event) => {
+    setFilterTerm(event.target.value);
+  };
+
   return (
     <React.Fragment>
       filter shown with{" "}
@@ -41,7 +74,15 @@ const Filter = ({ filterTerm, setFilterTerm, handleFilterChange }) => {
   );
 };
 
-const Persons = ({ personsToShow }) => {
+const Persons = ({ persons, filterTerm }) => {
+  // case-insensitive search
+  const personsToShow =
+    filterTerm === ""
+      ? persons
+      : persons.filter((person) =>
+          person.name.toLowerCase().includes(filterTerm.toLowerCase())
+        );
+
   return (
     <React.Fragment>
       {personsToShow.map((person) => (
@@ -61,60 +102,20 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
 
-  const personsToShow =
-    filterTerm === ""
-      ? persons
-      : persons.filter((person) =>
-          person.name.toLowerCase().includes(filterTerm.toLowerCase())
-        );
-
-  const addNewEntry = (event) => {
-    event.preventDefault();
-    const nameObject = {
-      name: newName,
-      number: newNumber,
-    };
-
-    for (let el of persons) {
-      if (nameObject.name === el.name) {
-        alert(`${nameObject.name} is already added to phonebook`);
-      } else if (nameObject.name === "" || nameObject.number === "") {
-        alert("Name or number must be non-empty");
-      } else {
-        setPersons(persons.concat(nameObject));
-      }
-    }
-  };
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
-
-  const handleFilterChange = (event) => {
-    setFilterTerm(event.target.value);
-  };
-
   return (
     <div>
       <h1>Phonebook</h1>
-      <Filter
-        filterTerm={filterTerm}
-        setFilterTerm={setFilterTerm}
-        handleFilterChange={handleFilterChange}
-      />
+      <Filter filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
       <PersonForm
-        addNewEntry={addNewEntry}
+        persons={persons}
+        setNewName={setNewName}
+        setNewNumber={setNewNumber}
+        setPersons={setPersons}
         newName={newName}
-        handleNameChange={handleNameChange}
         newNumber={newNumber}
-        handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons persons={persons} filterTerm={filterTerm} />
     </div>
   );
 };
