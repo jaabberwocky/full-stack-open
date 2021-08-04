@@ -16,7 +16,7 @@ function App() {
       axios.get("http://restcountries.eu/rest/v2/all").then((resp) => {
         console.log("data loaded");
         console.log(resp);
-        filterCountries(resp.data, searchTerm);
+        setCountries(filterCountries(resp.data, searchTerm));
       });
     }
   };
@@ -32,7 +32,7 @@ function App() {
 
     if (arr.length === 1) {
       const singleCountry = arr[0];
-      setCountries(
+      return (
         <div id="singleCountry">
           <h2>{singleCountry.name}</h2>
           <p>capital {singleCountry.capital}</p>
@@ -43,7 +43,7 @@ function App() {
               <li key={lang.iso639_2}>{lang.name}</li>
             ))}
           </ul>
-          <br/>
+          <br />
           <img
             src={singleCountry.flag}
             alt={singleCountry.name + "flag"}
@@ -52,10 +52,12 @@ function App() {
           />
         </div>
       );
+    } else if (arr.length === 0) {
+      return <p>No countries found</p>;
     } else if (arr.length < 10) {
-      setCountries(arr.map((country) => <p>{country.name}</p>));
+      return arr.map((country) => <p>{country.name}</p>);
     } else {
-      setCountries(<p>too many countries, narrow down search term</p>);
+      return <p>too many countries, narrow down search term</p>;
     }
   };
 
