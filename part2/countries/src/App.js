@@ -61,6 +61,28 @@ function App() {
 }
 
 const CountryDetail = ({ singleCountry }) => {
+  const [weather, setWeather] = useState("");
+  const [weatherDescription, setWeatherDescription] = useState("");
+  const [temp, setTemp] = useState("");
+  const [wind, setWind] = useState("");
+  const [windDirection, setWindDirection] = useState("");
+
+  const hook = () => {
+    axios
+      .get(
+        `http://api.openweathermap.org/data/2.5/weather?q=${singleCountry.capital}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+      )
+      .then((resp) => {
+        setWeather(resp.data.weather[0].main);
+        setWeatherDescription(resp.data.weather[0].description);
+        setTemp(resp.data.main.temp);
+        setWind(resp.data.wind.speed);
+        setWindDirection(resp.data.wind.deg);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(hook);
+
   return (
     <div id={singleCountry + "_singleCountry"}>
       <h2>{singleCountry.name}</h2>
@@ -79,6 +101,10 @@ const CountryDetail = ({ singleCountry }) => {
         width="100px"
         height="50px"
       />
+      <h2>Weather in {singleCountry.capital}</h2>
+      <p>{weather} ({weatherDescription})</p>
+      <p><b>temperature: </b>{temp}</p>
+      <p><b>wind: </b>{wind} m/s at {windDirection} degrees</p>
     </div>
   );
 };
