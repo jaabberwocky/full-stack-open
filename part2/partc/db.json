@@ -27,8 +27,15 @@
       "id": 5
     },
     {
+      "content": "numero 6",
+      "date": "2021-08-05T14:31:37.886Z",
+      "important": false,
+      "id": 6
+    },
+    {
       "content": "changed it!",
-      "id": 7
+      "id": 7,
+      "important": false
     },
     {
       "content": "James Bond",
@@ -44,7 +51,50 @@
     },
     {
       "content": "Another new note 2",
-      "id": 11
+      "id": 11,
+      "important": true
+    },
+    {
+      "content": "POSTing a new note",
+      "date": "2021-08-05T14:31:37.886Z",
+      "important": false,
+      "id": 12
+    },
+    {
+      "content": "HEY THERE POST",
+      "date": "2021-08-05T14:32:15.233Z",
+      "important": true,
+      "id": 13
+    },
+    {
+      "content": "JOHNSON",
+      "date": "2021-08-05T14:35:37.271Z",
+      "important": false,
+      "id": 14
+    },
+    {
+      "content": "testing new post render",
+      "date": "2021-08-05T14:36:52.179Z",
+      "important": false,
+      "id": 15
+    },
+    {
+      "content": "another post",
+      "date": "2021-08-05T14:37:28.642Z",
+      "important": false,
+      "id": 16
+    },
+    {
+      "content": "new noteservice post",
+      "date": "2021-08-05T15:01:30.827Z",
+      "important": false,
+      "id": 17
+    },
+    {
+      "content": "another noteservice post",
+      "date": "2021-08-05T15:02:50.242Z",
+      "important": false,
+      "id": 18
     }
   ]
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./App.css";
 import Note from "./components/Note";
+import noteService from "./services/notes";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -9,14 +9,11 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
 
   const hook = () => {
-    console.log("effect");
-    axios.get("http://localhost:3001/notes").then((response) => {
-      console.log("promise fulfilled");
-      setNotes(response.data);
+    noteService.getAll().then((notes) => {
+      setNotes(notes);
     });
   };
   useEffect(hook, [showAll]); // if the second arg is empty array, only run on first render
-  console.log("render", notes.length, "notes");
 
   const addNote = (event) => {
     event.preventDefault();
@@ -24,14 +21,23 @@ const App = () => {
       content: newNote,
       date: new Date().toISOString(),
       important: Math.random() < 0.5, // 50% chance to be important
-      id: notes.length + 1,
     };
-    setNotes(notes.concat(noteObject));
-    setNewNote("");
+    noteService.create(noteObject).then((resp) => {
+      setNotes(notes.concat(resp));
+      setNewNote("");
+    });
   };
 
   const handleNoteChange = (event) => {
     setNewNote(event.target.value);
+  };
+
+  const toggleImportanceOf = (id) => {
+    const note = notes.find((n) => n.id === id);
+    const changedNote = { ...note, important: !note.important };
+    noteService.update(id, changedNote).then((resp) => {
+      setNotes(notes.map((note) => (note.id !== id ? note : resp)));
+    });
   };
 
   const notesToShow = showAll
@@ -48,7 +54,11 @@ const App = () => {
       <i>Showing {showAll ? "all" : "important"} notes</i>
       <ul>
         {notesToShow.map((note) => (
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
         ))}
       </ul>
       <form onSubmit={addNote}>
