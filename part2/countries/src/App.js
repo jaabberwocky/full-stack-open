@@ -37,7 +37,9 @@ function App() {
       return <p>No countries found</p>;
     } else if (arr.length < 10) {
       // render of multiple countries
-      return arr.map((country) => <Country country={country} />);
+      return arr.map((country) => (
+        <Country key={country.name} country={country} />
+      ));
     } else {
       return <p>too many countries, narrow down search term</p>;
     }
@@ -61,28 +63,6 @@ function App() {
 }
 
 const CountryDetail = ({ singleCountry }) => {
-  const [weather, setWeather] = useState("");
-  const [weatherDescription, setWeatherDescription] = useState("");
-  const [temp, setTemp] = useState("");
-  const [wind, setWind] = useState("");
-  const [windDirection, setWindDirection] = useState("");
-
-  const hook = () => {
-    axios
-      .get(
-        `http://api.openweathermap.org/data/2.5/weather?q=${singleCountry.capital}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
-      )
-      .then((resp) => {
-        setWeather(resp.data.weather[0].main);
-        setWeatherDescription(resp.data.weather[0].description);
-        setTemp(resp.data.main.temp);
-        setWind(resp.data.wind.speed);
-        setWindDirection(resp.data.wind.deg);
-      })
-      .catch((err) => console.log(err));
-  };
-  useEffect(hook);
-
   return (
     <div id={singleCountry + "_singleCountry"}>
       <h2>{singleCountry.name}</h2>
@@ -101,11 +81,50 @@ const CountryDetail = ({ singleCountry }) => {
         width="100px"
         height="50px"
       />
-      <h2>Weather in {singleCountry.capital}</h2>
-      <p>{weather} ({weatherDescription})</p>
-      <p><b>temperature: </b>{temp}</p>
-      <p><b>wind: </b>{wind} m/s at {windDirection} degrees</p>
+      <Weather country={singleCountry}/>
     </div>
+  );
+};
+
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState("");
+  const [weatherDescription, setWeatherDescription] = useState("");
+  const [temp, setTemp] = useState("");
+  const [wind, setWind] = useState("");
+  const [windDirection, setWindDirection] = useState("");
+
+  const hook = () => {
+    axios
+      .get(
+        `http://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
+      )
+      .then((resp) => {
+        setWeather(resp.data.weather[0].main);
+        setWeatherDescription(resp.data.weather[0].description);
+        setTemp(resp.data.main.temp);
+        setWind(resp.data.wind.speed);
+        setWindDirection(resp.data.wind.deg);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(hook);
+
+  return (
+    <React.Fragment>
+      <h2>Weather in {country.capital}</h2>
+      <p>
+        {weather}
+      </p>
+      <i>{weatherDescription}</i>
+      <p>
+        <b>temperature: </b>
+        {temp}
+      </p>
+      <p>
+        <b>wind: </b>
+        {wind} m/s at {windDirection} degrees
+      </p>
+    </React.Fragment>
   );
 };
 
@@ -118,9 +137,9 @@ const Country = ({ country }) => {
 
   return (
     <div id={country.name}>
-      <p class="country">{country.name} </p>
+      <p className="country">{country.name} </p>
       <button onClick={handleClick}>{show ? "hide" : "show"}</button>
-      {show ? <CountryDetail singleCountry={country} /> : ""}
+      {show ? <CountryDetail singleCountry={country} /> : null}
     </div>
   );
 };
