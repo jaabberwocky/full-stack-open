@@ -32,11 +32,12 @@ function App() {
 
     if (arr.length === 1) {
       const singleCountry = arr[0];
-      return <SingleCountry singleCountry={singleCountry}/>
+      return <CountryDetail singleCountry={singleCountry}/>
     } else if (arr.length === 0) {
       return <p>No countries found</p>;
     } else if (arr.length < 10) {
-      return arr.map((country) => <p>{country.name}</p>);
+      // render of multiple countries
+      return arr.map((country) => <Country country={country}/>);
     } else {
       return <p>too many countries, narrow down search term</p>;
     }
@@ -59,7 +60,7 @@ function App() {
   );
 }
 
-const SingleCountry = ({singleCountry}) => {
+const CountryDetail = ({singleCountry}) => {
   return (
   <div id={singleCountry + "_singleCountry"}>
           <h2>{singleCountry.name}</h2>
@@ -79,6 +80,22 @@ const SingleCountry = ({singleCountry}) => {
             height="50px"
           />
         </div>
+  )
+}
+
+const Country = ({country}) => {
+  const [show, setShow] = useState(false);
+
+  const handleClick = (event) => {
+    setShow(!show);
+  }
+
+  return (
+    <div id={country.name}>
+      <p class="country">{country.name} </p>
+      <button onClick={handleClick}>{show ? 'hide':'show'}</button>
+      {show ? <CountryDetail singleCountry={country}/> : ''}
+    </div>
   )
 }
 const Search = ({ searchTerm, setSearchTerm, field, setField }) => {
