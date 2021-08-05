@@ -101,7 +101,7 @@ const Weather = ({ country }) => {
       .then((resp) => {
         setWeather(resp.data.weather[0].main);
         setWeatherDescription(resp.data.weather[0].description);
-        setTemp(resp.data.main.temp);
+        setTemp(resp.data.main.temp+"°C");
         setWind(resp.data.wind.speed);
         setWindDirection(resp.data.wind.deg);
       })
