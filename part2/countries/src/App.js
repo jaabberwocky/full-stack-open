@@ -32,12 +32,12 @@ function App() {
 
     if (arr.length === 1) {
       const singleCountry = arr[0];
-      return <CountryDetail singleCountry={singleCountry}/>
+      return <CountryDetail singleCountry={singleCountry} />;
     } else if (arr.length === 0) {
       return <p>No countries found</p>;
     } else if (arr.length < 10) {
       // render of multiple countries
-      return arr.map((country) => <Country country={country}/>);
+      return arr.map((country) => <Country country={country} />);
     } else {
       return <p>too many countries, narrow down search term</p>;
     }
@@ -60,44 +60,44 @@ function App() {
   );
 }
 
-const CountryDetail = ({singleCountry}) => {
+const CountryDetail = ({ singleCountry }) => {
   return (
-  <div id={singleCountry + "_singleCountry"}>
-          <h2>{singleCountry.name}</h2>
-          <p>capital {singleCountry.capital}</p>
-          <p>population {singleCountry.population}</p>
-          <h2>languages</h2>
-          <ul>
-            {singleCountry.languages.map((lang) => (
-              <li key={lang.iso639_2}>{lang.name}</li>
-            ))}
-          </ul>
-          <br />
-          <img
-            src={singleCountry.flag}
-            alt={singleCountry.name + "flag"}
-            width="100px"
-            height="50px"
-          />
-        </div>
-  )
-}
+    <div id={singleCountry + "_singleCountry"}>
+      <h2>{singleCountry.name}</h2>
+      <p>capital {singleCountry.capital}</p>
+      <p>population {singleCountry.population}</p>
+      <h2>languages</h2>
+      <ul>
+        {singleCountry.languages.map((lang) => (
+          <li key={lang.iso639_2}>{lang.name}</li>
+        ))}
+      </ul>
+      <br />
+      <img
+        src={singleCountry.flag}
+        alt={singleCountry.name + "flag"}
+        width="100px"
+        height="50px"
+      />
+    </div>
+  );
+};
 
-const Country = ({country}) => {
+const Country = ({ country }) => {
   const [show, setShow] = useState(false);
 
   const handleClick = (event) => {
     setShow(!show);
-  }
+  };
 
   return (
     <div id={country.name}>
       <p class="country">{country.name} </p>
-      <button onClick={handleClick}>{show ? 'hide':'show'}</button>
-      {show ? <CountryDetail singleCountry={country}/> : ''}
+      <button onClick={handleClick}>{show ? "hide" : "show"}</button>
+      {show ? <CountryDetail singleCountry={country} /> : ""}
     </div>
-  )
-}
+  );
+};
 const Search = ({ searchTerm, setSearchTerm, field, setField }) => {
   const handleFieldChange = (event) => {
     setField(event.target.value);
