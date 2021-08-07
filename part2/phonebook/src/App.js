@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from "react";
 import personService from "./services/persons.js";
 
-const Entry = ({ person }) => {
+const Entry = ({ person, persons, setPersons }) => {
+  const handleClick = () => {
+    const confirmDelete = window.confirm(`Delete ${person.name}?`);
+    if (confirmDelete) {
+      const idToDelete = person.id;
+      personService.deletePerson(idToDelete).then((resp) => console.log(resp));
+      setPersons(persons.filter((person) => person.id !== idToDelete));
+    }
+  };
   return (
     <React.Fragment>
       <p>
-        {person.name} {person.number}
+        {person.name} {person.number}{" "}
+        <button type="submit" onClick={handleClick}>
+          delete
+        </button>
       </p>
     </React.Fragment>
   );
@@ -78,7 +89,7 @@ const Filter = ({ filterTerm, setFilterTerm }) => {
   );
 };
 
-const Persons = ({ persons, filterTerm }) => {
+const Persons = ({ persons, filterTerm, setPersons }) => {
   // case-insensitive search
   const personsToShow =
     filterTerm === ""
@@ -90,7 +101,7 @@ const Persons = ({ persons, filterTerm }) => {
   return (
     <React.Fragment>
       {personsToShow.map((person) => (
-        <Entry key={person.name} person={person} />
+        <Entry key={person.name} person={person} persons={persons} setPersons={setPersons} />
       ))}
     </React.Fragment>
   );
@@ -121,7 +132,7 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterTerm={filterTerm} />
+      <Persons persons={persons} filterTerm={filterTerm} setPersons={setPersons} />
     </div>
   );
 };

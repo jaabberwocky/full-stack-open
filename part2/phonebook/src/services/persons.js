@@ -12,9 +12,15 @@ const getAll = () => {
   return req;
 };
 
+const deletePerson = (id) => {
+  const req = axios.delete(BASE_URL + `/${id}`).then(resp => resp.data)
+  return req
+}
+
 const exportFunctions = {
     createPerson,
     getAll,
+    deletePerson
 }
 
 export default exportFunctions;
