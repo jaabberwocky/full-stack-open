@@ -2,7 +2,7 @@ const e = require("express");
 const express = require("express");
 const app = express();
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -26,6 +26,18 @@ const persons = [
 ];
 app.use(express.json());
 
+// helper functions
+const generateId = () => {
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+  }
+
+  return getRandomInt(0, Number.MAX_VALUE);
+};
+
+// routes
 app.get("/api/persons", (req, resp) => {
   resp.json(persons);
 });
@@ -43,6 +55,33 @@ app.get("/api/persons/:id", (req, resp) => {
   } else {
     resp.status(404).end();
   }
+});
+
+app.delete("/api/persons/:id", (req, resp) => {
+  const id = Number(req.params.id);
+  persons = persons.filter((person) => person.id !== id);
+  resp.status(204).end();
+});
+
+app.post("/api/persons", (req, resp) => {
+  const body = req.body;
+  const candidate = persons.find((person) => person.name === body.name);
+  if (!body.name || !body.number) {
+    return resp.status(400).json({
+      error: "bad request due to missing name or number",
+    });
+  } else if (candidate) {
+    return resp.status(400).json({
+      error: "name must be unique",
+    });
+  }
+  const personObject = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+  persons = persons.concat(personObject);
+  resp.json(personObject);
 });
 
 const PORT = 3001;
