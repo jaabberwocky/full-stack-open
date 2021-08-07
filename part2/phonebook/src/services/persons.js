@@ -13,14 +13,20 @@ const getAll = () => {
 };
 
 const deletePerson = (id) => {
-  const req = axios.delete(BASE_URL + `/${id}`).then(resp => resp.data)
-  return req
-}
+  const req = axios.delete(BASE_URL + `/${id}`).then((resp) => resp.data);
+  return req;
+};
+
+const updatePerson = (id, obj) => {
+  const req = axios.put(BASE_URL + `/${id}`, obj).then((resp) => resp.data);
+  return req;
+};
 
 const exportFunctions = {
-    createPerson,
-    getAll,
-    deletePerson
-}
+  createPerson,
+  getAll,
+  deletePerson,
+  updatePerson,
+};
 
 export default exportFunctions;

@@ -6,7 +6,7 @@ const Entry = ({ person, persons, setPersons }) => {
     const confirmDelete = window.confirm(`Delete ${person.name}?`);
     if (confirmDelete) {
       const idToDelete = person.id;
-      personService.deletePerson(idToDelete).then((resp) => console.log(resp));
+      personService.deletePerson(idToDelete);
       setPersons(persons.filter((person) => person.id !== idToDelete));
     }
   };
@@ -37,12 +37,23 @@ const PersonForm = ({
       number: newNumber,
     };
 
-    for (let el of persons) {
+    for (const [i, el] of persons.entries()) {
       if (nameObject.name === el.name) {
-        alert(`${nameObject.name} is already added to phonebook`);
+        const confirmPersonUpdate = window.confirm(
+          `${nameObject.name} is already added to phonebook, replace the old number with a new one?`
+        );
         setNewName("");
         setNewNumber("");
-        return;
+        if (confirmPersonUpdate) {
+          personService.updatePerson(el.id, nameObject).then(() => {
+            let updatedPersons = [...persons];
+            updatedPersons[i] = nameObject;
+            setPersons(updatedPersons);
+          });
+          return;
+        } else {
+          return;
+        }
       }
     }
 
@@ -101,7 +112,12 @@ const Persons = ({ persons, filterTerm, setPersons }) => {
   return (
     <React.Fragment>
       {personsToShow.map((person) => (
-        <Entry key={person.name} person={person} persons={persons} setPersons={setPersons} />
+        <Entry
+          key={person.name}
+          person={person}
+          persons={persons}
+          setPersons={setPersons}
+        />
       ))}
     </React.Fragment>
   );
@@ -132,7 +148,11 @@ const App = () => {
         newNumber={newNumber}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterTerm={filterTerm} setPersons={setPersons} />
+      <Persons
+        persons={persons}
+        filterTerm={filterTerm}
+        setPersons={setPersons}
+      />
     </div>
   );
 };
