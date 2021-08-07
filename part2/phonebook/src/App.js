@@ -29,6 +29,7 @@ const PersonForm = ({
   setNewNumber,
   newName,
   newNumber,
+  setSuccessMessage,
 }) => {
   const addNewEntry = (event) => {
     event.preventDefault();
@@ -61,6 +62,7 @@ const PersonForm = ({
       setPersons(persons.concat(person));
       setNewName("");
       setNewNumber("");
+      setSuccessMessage(`${person.name} added`);
     });
   };
 
@@ -87,6 +89,14 @@ const PersonForm = ({
   );
 };
 
+const SuccessMessage = ({ message, setSuccessMessage, delay }) => {
+  useEffect(() => setTimeout(() => setSuccessMessage(null), delay));
+  if (message === null) {
+    return null;
+  }
+  return <div className="success">{message}</div>;
+};
+
 const Filter = ({ filterTerm, setFilterTerm }) => {
   const handleFilterChange = (event) => {
     setFilterTerm(event.target.value);
@@ -101,7 +111,6 @@ const Filter = ({ filterTerm, setFilterTerm }) => {
 };
 
 const Persons = ({ persons, filterTerm, setPersons }) => {
-  // case-insensitive search
   const personsToShow =
     filterTerm === ""
       ? persons
@@ -124,20 +133,22 @@ const Persons = ({ persons, filterTerm, setPersons }) => {
 };
 
 const App = () => {
-  const hook = () => {
-    personService.getAll().then((allPersons) => setPersons(allPersons));
-  };
-
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
+
+  const hook = () => {
+    personService.getAll().then((allPersons) => setPersons(allPersons));
+  };
 
   useEffect(hook, []);
 
   return (
     <div>
       <h1>Phonebook</h1>
+      <SuccessMessage message={successMessage} setSuccessMessage={setSuccessMessage} delay={5000}/>
       <Filter filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
       <PersonForm
         persons={persons}
@@ -146,6 +157,7 @@ const App = () => {
         setPersons={setPersons}
         newName={newName}
         newNumber={newNumber}
+        setSuccessMessage={setSuccessMessage}
       />
       <h2>Numbers</h2>
       <Persons
