@@ -34,9 +34,12 @@ const PersonForm = ({
         return;
       }
     }
-    setPersons(persons.concat(nameObject));
-    setNewName("");
-    setNewNumber("");
+
+    axios.post("http://localhost:3001/persons", nameObject).then((resp) => {
+      setPersons(persons.concat(nameObject));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const handleNameChange = (event) => {
@@ -96,8 +99,6 @@ const Persons = ({ persons, filterTerm }) => {
 const App = () => {
   const hook = () => {
     axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("data loaded");
-      console.log(response);
       setPersons(response.data);
     });
   };
