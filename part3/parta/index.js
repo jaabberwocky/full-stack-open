@@ -1,4 +1,6 @@
-const http = require("http");
+const { response } = require("express");
+const express = require("express");
+const app = express();
 
 let notes = [
   {
@@ -21,11 +23,55 @@ let notes = [
   },
 ];
 
-const app = http.createServer((request, response) => {
-  response.writeHead(200, { "Content-Type": "application/json" });
-  response.end(JSON.stringify(notes));
+const generateId = () => {
+  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  return maxId + 1;
+};
+
+app.use(express.json());
+
+app.get("/", (req, resp) => {
+  resp.send("<h1>Hello there!</h1>");
+});
+
+app.get("/api/notes", (req, resp) => {
+  resp.json(notes);
+});
+
+app.get("/api/notes/:id", (req, resp) => {
+  const id = Number(req.params.id);
+  const note = notes.find((note) => note.id === id);
+  if (note) {
+    resp.json(note);
+  } else {
+    resp.status(404).end();
+  }
+});
+
+app.delete("/api/notes/:id", (req, resp) => {
+  const id = Number(req.params.id);
+  notes = notes.filter((note) => note.id !== id);
+  resp.status(204).end();
+});
+
+app.post("/api/notes", (req, resp) => {
+  const body = req.body;
+  if (!body.content || !body.important) {
+    return resp.status(400).json({
+      error: "missing content or importance",
+    });
+  }
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    date: new Date(),
+    id: generateId(),
+  };
+  notes = notes.concat(note);
+  resp.json(note);
 });
 
 const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
