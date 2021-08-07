@@ -1,3 +1,4 @@
+const e = require("express");
 const express = require("express");
 const app = express();
 
@@ -30,9 +31,19 @@ app.get("/api/persons", (req, resp) => {
 });
 
 app.get("/info", (req, resp) => {
-    const date = new Date();
-    resp.send(`Phonebook has info for ${persons.length} people.<br><br>${date}`)
-})
+  const date = new Date();
+  resp.send(`Phonebook has info for ${persons.length} people.<br><br>${date}`);
+});
+
+app.get("/api/persons/:id", (req, resp) => {
+  const id = Number(req.params.id);
+  const person = persons.find((person) => person.id === id);
+  if (person) {
+    resp.json(person);
+  } else {
+    resp.status(404).end();
+  }
+});
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
