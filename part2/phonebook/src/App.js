@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from "react";
 import personService from "./services/persons.js";
 
-const Entry = ({ person, persons, setPersons }) => {
+const Entry = ({
+  person,
+  persons,
+  setPersons,
+  setErrorMessage,
+  setSuccessMessage,
+}) => {
   const handleClick = () => {
     const confirmDelete = window.confirm(`Delete ${person.name}?`);
     if (confirmDelete) {
       const idToDelete = person.id;
-      personService.deletePerson(idToDelete);
+      personService
+        .deletePerson(idToDelete)
+        .then(() => setSuccessMessage(`Deleted ${person.name}`))
+        .catch((e) =>
+          setErrorMessage(
+            `Information of ${person.name} cannot be deleted as it is not found on server`
+          )
+        );
       setPersons(persons.filter((person) => person.id !== idToDelete));
     }
   };
@@ -30,6 +43,7 @@ const PersonForm = ({
   newName,
   newNumber,
   setSuccessMessage,
+  setErrorMessage,
 }) => {
   const addNewEntry = (event) => {
     event.preventDefault();
@@ -46,11 +60,18 @@ const PersonForm = ({
         setNewName("");
         setNewNumber("");
         if (confirmPersonUpdate) {
-          personService.updatePerson(el.id, nameObject).then(() => {
-            let updatedPersons = [...persons];
-            updatedPersons[i] = nameObject;
-            setPersons(updatedPersons);
-          });
+          personService
+            .updatePerson(el.id, nameObject)
+            .then(() => {
+              let updatedPersons = [...persons];
+              updatedPersons[i] = nameObject;
+              setPersons(updatedPersons);
+            })
+            .catch((e) => {
+              setErrorMessage(
+                `Information of ${nameObject.name} cannot be updated as it is not found on server`
+              );
+            });
           return;
         } else {
           return;
@@ -97,6 +118,14 @@ const SuccessMessage = ({ message, setSuccessMessage, delay }) => {
   return <div className="success">{message}</div>;
 };
 
+const ErrorMessage = ({ message, setErrorMessage, delay }) => {
+  useEffect(() => setTimeout(() => setErrorMessage(null), delay));
+  if (message === null) {
+    return null;
+  }
+  return <div className="error">{message}</div>;
+};
+
 const Filter = ({ filterTerm, setFilterTerm }) => {
   const handleFilterChange = (event) => {
     setFilterTerm(event.target.value);
@@ -110,7 +139,13 @@ const Filter = ({ filterTerm, setFilterTerm }) => {
   );
 };
 
-const Persons = ({ persons, filterTerm, setPersons }) => {
+const Persons = ({
+  persons,
+  filterTerm,
+  setPersons,
+  setSuccessMessage,
+  setErrorMessage,
+}) => {
   const personsToShow =
     filterTerm === ""
       ? persons
@@ -126,6 +161,8 @@ const Persons = ({ persons, filterTerm, setPersons }) => {
           person={person}
           persons={persons}
           setPersons={setPersons}
+          setSuccessMessage={setSuccessMessage}
+          setErrorMessage={setErrorMessage}
         />
       ))}
     </React.Fragment>
@@ -138,6 +175,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const hook = () => {
     personService.getAll().then((allPersons) => setPersons(allPersons));
@@ -148,7 +186,16 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <SuccessMessage message={successMessage} setSuccessMessage={setSuccessMessage} delay={5000}/>
+      <SuccessMessage
+        message={successMessage}
+        setSuccessMessage={setSuccessMessage}
+        delay={5000}
+      />
+      <ErrorMessage
+        message={errorMessage}
+        setErrorMessage={setErrorMessage}
+        delay={5000}
+      />
       <Filter filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
       <PersonForm
         persons={persons}
@@ -158,12 +205,15 @@ const App = () => {
         newName={newName}
         newNumber={newNumber}
         setSuccessMessage={setSuccessMessage}
+        setErrorMessage={setErrorMessage}
       />
       <h2>Numbers</h2>
       <Persons
         persons={persons}
         filterTerm={filterTerm}
         setPersons={setPersons}
+        setErrorMessage={setErrorMessage}
+        setSuccessMessage={setSuccessMessage}
       />
     </div>
   );
