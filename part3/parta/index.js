@@ -1,6 +1,7 @@
 const { response } = require("express");
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 let notes = [
   {
@@ -29,6 +30,7 @@ const generateId = () => {
 };
 
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, resp) => {
   resp.send("<h1>Hello there!</h1>");
@@ -71,7 +73,7 @@ app.post("/api/notes", (req, resp) => {
   resp.json(note);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
