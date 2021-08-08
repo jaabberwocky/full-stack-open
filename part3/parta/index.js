@@ -31,10 +31,7 @@ const generateId = () => {
 
 app.use(express.json());
 app.use(cors());
-
-app.get("/", (req, resp) => {
-  resp.send("<h1>Hello there!</h1>");
-});
+app.use(express.static("build"));
 
 app.get("/api/notes", (req, resp) => {
   resp.json(notes);
@@ -71,6 +68,25 @@ app.post("/api/notes", (req, resp) => {
   };
   notes = notes.concat(note);
   resp.json(note);
+});
+
+app.put("/api/notes/:id", (req, resp) => {
+  const id = Number(req.params.id);
+  const body = req.body;
+  if (!body.content || !body.important) {
+    return resp.status(400).json({
+      error: "bad request due to missing content or importance",
+    });
+  } else {
+    const updatedNote = {
+      id: id,
+      content: body.content,
+      important: body.important,
+      date: new Date(),
+    };
+    notes[id] = updatedNote;
+    resp.json(updatedNote);
+  }
 });
 
 const PORT = process.env.PORT || 3001;
