@@ -29,8 +29,10 @@ const generateId = async () => {
 };
 
 // routes
-app.get("/api/persons", (req, resp) => {
-  Entry.find({}).then((response) => resp.json(response));
+app.get("/api/persons", (req, resp, next) => {
+  Entry.find({})
+    .then((response) => resp.json(response))
+    .catch((e) => next(e));
 });
 
 app.get("/info", (req, resp) => {
@@ -69,8 +71,11 @@ app.delete("/api/persons/:id", (req, resp, next) => {
     .catch((err) => next(err));
 });
 
-app.post("/api/persons", (req, resp) => {
+app.post("/api/persons", (req, resp, next) => {
   const body = req.body;
+  if (!body.name || !body.number) {
+    return resp.status(400).send({ error: "no name or number provided" });
+  }
   generateId().then((res) => {
     const personObject = new Entry({
       id: res,
@@ -82,8 +87,27 @@ app.post("/api/persons", (req, resp) => {
       .then((savedEntry) => {
         resp.json(savedEntry);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => next(e));
   });
+});
+
+app.put("/api/persons/:id", (req, resp, next) => {
+  const id = Number(req.params.id);
+  const body = req.body;
+  if (!body.name || !body.number) {
+    return resp.status(400).send({ error: "no name or number provided" });
+  }
+  const personObject = {
+    id: id,
+    name: body.name,
+    number: body.number,
+  };
+
+  Entry.findOneAndUpdate({ id: id }, personObject)
+    .then((entry) => {
+      resp.json(entry);
+    })
+    .catch((e) => next(e));
 });
 
 // error-handling middleware
