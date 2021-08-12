@@ -43,7 +43,7 @@ app.get("/info", (req, resp) => {
   });
 });
 
-app.get("/api/persons/:id", (req, resp) => {
+app.get("/api/persons/:id", (req, resp, next) => {
   const id = req.params.id;
   Entry.findOne({ id: id })
     .then((entry) => {
@@ -53,16 +53,20 @@ app.get("/api/persons/:id", (req, resp) => {
         resp.status(404).end();
       }
     })
-    .catch((error) => {
-      console.log(error);
-      resp.status(400).send({ error: "malformatted id" });
-    });
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (req, resp) => {
+app.delete("/api/persons/:id", (req, resp, next) => {
   const id = Number(req.params.id);
-  persons = persons.filter((person) => person.id !== id);
-  resp.status(204).end();
+  Entry.deleteOne({ id: id })
+    .then((entry) => {
+      if (entry.deletedCount === 1) {
+        resp.status(204).end();
+      } else {
+        resp.status(404).end();
+      }
+    })
+    .catch((err) => next(err));
 });
 
 app.post("/api/persons", (req, resp) => {
@@ -81,6 +85,18 @@ app.post("/api/persons", (req, resp) => {
       .catch((e) => console.log(e));
   });
 });
+
+// error-handling middleware
+// error handler must be at the end of stack
+const errorHandler = (error, request, response, next) => {
+  console.log("ERROR HANDLER: ", error.message);
+  if (error.name === "CastError") {
+    // CastError: invalid object Id for Mongo
+    return response.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
