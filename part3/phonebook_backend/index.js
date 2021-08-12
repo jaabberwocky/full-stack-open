@@ -45,9 +45,18 @@ app.get("/info", (req, resp) => {
 
 app.get("/api/persons/:id", (req, resp) => {
   const id = req.params.id;
-  Entry.find({ id: id }).then((entry) => {
-    resp.json(entry);
-  });
+  Entry.findOne({ id: id })
+    .then((entry) => {
+      if (entry) {
+        resp.json(entry);
+      } else {
+        resp.status(404).end();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      resp.status(400).send({ error: "malformatted id" });
+    });
 });
 
 app.delete("/api/persons/:id", (req, resp) => {

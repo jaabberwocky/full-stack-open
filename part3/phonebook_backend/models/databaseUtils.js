@@ -1,5 +1,5 @@
 const Entry = require("./entry.js");
-const { connections } = require("mongoose");
+const mongoose = require("mongoose");
 
 const persons = [
   {
@@ -25,24 +25,28 @@ const persons = [
 ];
 
 const addEntries = () => {
-  for (const person of persons) {
-    const personEntry = new Entry({
-      id: person.id,
-      name: person.name,
-      number: person.number,
-    });
-    console.log(`Adding ${person.name}...`);
-    personEntry.save().then((r) => console.log(`Added ${r}`));
-  }
+  return new Promise((resolve, reject) => {
+    for (const person of persons) {
+      const personEntry = new Entry({
+        id: person.id,
+        name: person.name,
+        number: person.number,
+      });
+      console.log(`Adding ${person.name}...`);
+      personEntry.save().then((r) => console.log(`Added ${r}`));
+    }
+    resolve("All saves complete");
+  });
 };
 
 const main = () => {
   Entry.deleteMany({}, () => {
     console.log("Dropping all documents in Entry collection...");
     console.log("Delete complete!");
+    addEntries().then((r) => {
+      console.log(r);
+    });
   });
-  addEntries();
-  process.exit(0);
 };
 
 main();
