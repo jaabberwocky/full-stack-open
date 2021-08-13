@@ -24,7 +24,6 @@ app.use(express.static("build"));
 const generateId = async () => {
   const query = await Entry.find({}).sort({ id: -1 }).limit(1);
   const maxIdObj = query[0];
-  console.log("Max id currently is ", maxIdObj["id"]);
   return maxIdObj["id"] + 1;
 };
 
