@@ -73,9 +73,6 @@ app.delete("/api/persons/:id", (req, resp, next) => {
 
 app.post("/api/persons", (req, resp, next) => {
   const body = req.body;
-  if (!body.name || !body.number) {
-    return resp.status(400).send({ error: "no name or number provided" });
-  }
   generateId().then((res) => {
     const personObject = new Entry({
       id: res,
@@ -117,6 +114,8 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     // CastError: invalid object Id for Mongo
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
