@@ -7,7 +7,7 @@ const app = express();
 
 // middleware
 app.use(express.json());
-morgan.token("body", (req, res) => {
+morgan.token("body", (req) => {
   if (req.method === "POST") {
     return JSON.stringify(req.body);
   } else {

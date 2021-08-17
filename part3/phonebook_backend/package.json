@@ -8,11 +8,13 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../../part2/phonebook && npm run build --prod && cp -r build ../../part3/phonebook_backend",
-    "database": "node models/databaseUtils.js"
+    "database": "node models/databaseUtils.js",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^7.32.0",
     "nodemon": "^2.0.12"
   },
   "dependencies": {

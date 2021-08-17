@@ -1,5 +1,4 @@
 const Entry = require("./entry.js");
-const mongoose = require("mongoose");
 
 const persons = [
   {
@@ -25,7 +24,7 @@ const persons = [
 ];
 
 const addEntries = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     for (const person of persons) {
       const personEntry = new Entry({
         id: person.id,
