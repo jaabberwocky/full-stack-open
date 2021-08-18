@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +16,12 @@
     "find-config": "^1.0.0",
     "mongoose": "^5.13.7",
     "nodemon": "^2.0.12"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "jest": "^27.0.6"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
