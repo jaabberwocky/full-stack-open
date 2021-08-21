@@ -12,6 +12,12 @@ blogsRouter.get("/", (request, response, next) => {
 blogsRouter.post("/", (request, response, next) => {
   const blog = new Blog(request.body);
 
+  if (!blog.title || !blog.author || !blog.url || !blog.likes) {
+    return response.status(400).send({
+      error: "bad request due to missing attributes",
+    });
+  }
+
   blog
     .save()
     .then((result) => {
