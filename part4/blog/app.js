@@ -7,7 +7,12 @@ const logger = require("./utils/logger");
 const mongoose = require("mongoose");
 const config = require("./utils/config");
 
-logger.info("Connecting to", config.mongoUrl);
+logger.info(
+  "NODE_ENV =",
+  process.env.NODE_ENV,
+  "|| Connecting to",
+  config.mongoUrl
+);
 mongoose.connect(config.mongoUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
