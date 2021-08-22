@@ -12,10 +12,12 @@ blogsRouter.post("/", async (request, response) => {
   logger.info(`POST ${request.baseUrl}`);
   const blog = new Blog(request.body);
 
-  if (!blog.title || !blog.author || !blog.url || !blog.likes) {
+  if (!blog.title || !blog.author || !blog.url) {
     return response.status(400).send({
       error: "bad request due to missing attributes",
     });
+  } else if (!blog.likes) {
+    blog["likes"] = 0;
   }
 
   const savedBlog = await blog.save();

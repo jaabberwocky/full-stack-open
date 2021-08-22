@@ -75,6 +75,18 @@ test("blog is added with post", async () => {
   expect(response.body).toHaveLength(initialBlogs.length + 1);
 });
 
+test("blog without likes is added as default zero", async () => {
+  const newBlog = {
+    title: "hello world",
+    author: "sir stamford raffles",
+    url: "www.raffles.com",
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(200);
+  const response = await api.get("/api/blogs");
+  expect(response.body[response.body.length - 1].likes).toBe(0); // look at the last item
+});
+
 test("blogs have unique id", async () => {
   const response = await api.get("/api/blogs");
 
