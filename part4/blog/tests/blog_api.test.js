@@ -22,10 +22,17 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
-  await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
-  await blogObject.save();
+  console.log("Deleting test db...");
+  const blogObjects = initialBlogs.map((blog) => new Blog(blog));
+  const promiseArray = blogObjects.map((blog) => {
+    blog.save();
+    console.log(`${blog.title} saved...`);
+  });
+  await Promise.all(promiseArray);
+});
+
+afterAll(() => {
+  mongoose.connection.close();
 });
 
 test("blogs are returned as json", async () => {
@@ -47,6 +54,12 @@ test("a specific blog is within the returned blogs", async () => {
   expect(contents).toContain("Woohoo let's go");
 });
 
-afterAll(() => {
-  mongoose.connection.close();
+test("blog without content is not added", async () => {
+  const newBlog = {
+    title: "hello world",
+  };
+  await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api.get("/api/blogs");
+
+  expect(response.body).toHaveLength(initialBlogs.length);
 });
