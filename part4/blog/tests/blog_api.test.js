@@ -84,7 +84,7 @@ test("blog without likes is added as default zero", async () => {
 
   await api.post("/api/blogs").send(newBlog).expect(200);
   const response = await api.get("/api/blogs");
-  expect(response.body[response.body.length - 1].likes).toBe(0); // look at the last item
+  expect(response.body[response.body.length - 1].likes).toBe(0);
 });
 
 test("blogs have unique id", async () => {
