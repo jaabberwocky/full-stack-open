@@ -22,11 +22,9 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  console.log("Deleting test db...");
   const blogObjects = initialBlogs.map((blog) => new Blog(blog));
   const promiseArray = blogObjects.map((blog) => {
     blog.save();
-    console.log(`${blog.title} saved...`);
   });
   await Promise.all(promiseArray);
 });
@@ -62,4 +60,12 @@ test("blog without content is not added", async () => {
   const response = await api.get("/api/blogs");
 
   expect(response.body).toHaveLength(initialBlogs.length);
+});
+
+test("blogs have unique id", async () => {
+  const response = await api.get("/api/blogs");
+
+  for (let blog of response.body) {
+    expect(blog._id).toBeDefined();
+  }
 });
