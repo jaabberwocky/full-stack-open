@@ -52,9 +52,19 @@ test("a specific blog is within the returned blogs", async () => {
   expect(contents).toContain("Woohoo let's go");
 });
 
-test("blog without content is not added", async () => {
+test("blog without author and url is not added", async () => {
   const newBlog = {
     title: "hello world",
+  };
+  await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api.get("/api/blogs");
+
+  expect(response.body).toHaveLength(initialBlogs.length);
+});
+
+test("blog without title and url is not added", async () => {
+  const newBlog = {
+    author: "hello world",
   };
   await api.post("/api/blogs").send(newBlog).expect(400);
   const response = await api.get("/api/blogs");
