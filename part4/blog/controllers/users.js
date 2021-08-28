@@ -3,10 +3,13 @@ const User = require('../models/user');
 const logger = require('../utils/logger');
 const bcrypt = require('bcrypt');
 
+usersRouter.get('/', async (request, response) => {
+    const result = await User.find({});
+    response.json(result);
+});
+
 usersRouter.post('/', async (request, response) => {
-    logger.info(
-        `POST ${request.baseUrl} || Creating user ${request.body.username}`
-    );
+    logger.info(`POST ${request.baseUrl} || Creating user {${request.body}}`);
     const body = request.body;
 
     const saltRounds = 10;
