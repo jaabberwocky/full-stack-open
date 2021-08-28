@@ -40,4 +40,24 @@ blogsRouter.delete('/', async (request, response) => {
     response.status(200).end();
 });
 
+blogsRouter.put('/:id', async (request, response) => {
+    const id = request.params.id;
+    console.log('params id:', id);
+    const body = request.body;
+    // have to use findOne to get ONE doc instead of arr
+    const doc = await Blog.findOne({_id: id}); 
+
+    console.log(doc);
+
+    // update each field of the doc
+    doc.title = body.title;
+    doc.author = body.author;
+    doc.url = body.url;
+    doc.likes = body.likes
+    await doc.save();
+
+    response.json(doc);
+
+});
+
 module.exports = blogsRouter;

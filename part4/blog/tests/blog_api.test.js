@@ -116,6 +116,29 @@ test('delete blog gets a 200 in return', async () => {
 
     const deleteBlog = {
         _id: id,
-    }
+    };
     await api.delete('/api/blogs').send(deleteBlog).expect(200);
+});
+
+test('PUT blog gets a 200 in return', async () => {
+    const newBlog = {
+        title: 'hello world',
+        author: 'sir stamford raffles',
+        url: 'www.raffles.com',
+    };
+    const result = await api.post('/api/blogs').send(newBlog);
+    const id = result.body._id;
+
+    const updatedBlog = {
+        title: 'hello world 2',
+        author: 'sir stamford raffles',
+        url: 'www.raffles.com',
+    };
+    const resp = await api.put(`/api/blogs/${id}`).send(updatedBlog);
+    expect(resp.body.title).toBe('hello world 2');
+
+    const deleteBlog = {
+        _id: id,
+    };
+    await api.delete('/api/blogs').send(deleteBlog);
 });
