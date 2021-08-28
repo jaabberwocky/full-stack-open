@@ -104,3 +104,18 @@ test('blogs have unique id', async () => {
         expect(blog._id).toBeDefined();
     }
 });
+
+test('delete blog gets a 200 in return', async () => {
+    const newBlog = {
+        title: 'hello world',
+        author: 'sir stamford raffles',
+        url: 'www.raffles.com',
+    };
+    const result = await api.post('/api/blogs').send(newBlog);
+    const id = result.body._id;
+
+    const deleteBlog = {
+        _id: id,
+    }
+    await api.delete('/api/blogs').send(deleteBlog).expect(200);
+});

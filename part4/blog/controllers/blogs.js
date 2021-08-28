@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router();
+const mongoose = require('mongoose');
 const Blog = require('../models/blog');
 const logger = require('../utils/logger');
 
@@ -25,7 +26,18 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 blogsRouter.delete('/', async (request, response) => {
-    logger.info(`DELETE ${request.baseUrl}`);
+    const body = request.body;
+    logger.info(`DELETE ${request.baseUrl} id: ${body._id}`);
+
+    if (!body._id) {
+        return response.status(400).send({
+            error: 'missing id',
+        });
+    }
+    const id = mongoose.Types.ObjectId(body._id);
+    const result = await Blog.deleteOne({ _id: id });
+    console.log(`Deleted ${result.n} documents.`);
+    response.status(200).end();
 });
 
 module.exports = blogsRouter;
