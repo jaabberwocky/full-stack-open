@@ -1,28 +1,28 @@
 {
-  "name": "phonebook_backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd ../../part2/phonebook && npm run build --prod && cp -r build ../../part3/phonebook_backend",
-    "database": "node models/databaseUtils.js",
-    "lint": "eslint ."
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "eslint": "^7.32.0",
-    "nodemon": "^2.0.12"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "mongoose": "^5.13.5",
-    "mongoose-unique-validator": "^2.0.3",
-    "morgan": "^1.10.0"
-  }
+    "name": "phonebook_backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build:ui": "rm -rf build && cd ../../part2/phonebook && npm run build --prod && cp -r build ../../part3/phonebook_backend",
+        "database": "node models/databaseUtils.js",
+        "lint": "eslint ."
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "eslint": "^7.32.0",
+        "nodemon": "^2.0.12"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.13.5",
+        "mongoose-unique-validator": "^2.0.3",
+        "morgan": "^1.10.0"
+    }
 }

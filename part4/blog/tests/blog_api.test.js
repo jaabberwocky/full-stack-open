@@ -1,106 +1,106 @@
-const mongoose = require("mongoose");
-const supertest = require("supertest");
-const Blog = require("../models/blog");
-const app = require("../app");
+const mongoose = require('mongoose');
+const supertest = require('supertest');
+const Blog = require('../models/blog');
+const app = require('../app');
 
 const api = supertest(app);
 
 const initialBlogs = [
-  {
-    title: "Hold me back!",
-    author: "James Arthur",
-    url: "www.com",
-    likes: "17",
-  },
-  {
-    title: "Woohoo let's go",
-    author: "Tom Pippin",
-    url: "www.13.com",
-    likes: "21",
-  },
+    {
+        title: 'Hold me back!',
+        author: 'James Arthur',
+        url: 'www.com',
+        likes: '17',
+    },
+    {
+        title: "Woohoo let's go",
+        author: 'Tom Pippin',
+        url: 'www.13.com',
+        likes: '21',
+    },
 ];
 
 beforeEach(async () => {
-  await Blog.deleteMany({});
-  const blogObjects = initialBlogs.map((blog) => new Blog(blog));
-  const promiseArray = blogObjects.map((blog) => {
-    blog.save();
-  });
-  await Promise.all(promiseArray);
+    await Blog.deleteMany({});
+    const blogObjects = initialBlogs.map((blog) => new Blog(blog));
+    const promiseArray = blogObjects.map((blog) => {
+        blog.save();
+    });
+    await Promise.all(promiseArray);
 });
 
 afterAll(() => {
-  mongoose.connection.close();
+    mongoose.connection.close();
 });
 
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
+test('blogs are returned as json', async () => {
+    await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
 });
 
-test("all blogs are returned", async () => {
-  const response = await api.get("/api/blogs");
-  expect(response.body).toHaveLength(initialBlogs.length);
+test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(initialBlogs.length);
 });
 
-test("a specific blog is within the returned blogs", async () => {
-  const response = await api.get("/api/blogs");
+test('a specific blog is within the returned blogs', async () => {
+    const response = await api.get('/api/blogs');
 
-  const contents = response.body.map((r) => r.title);
-  expect(contents).toContain("Woohoo let's go");
+    const contents = response.body.map((r) => r.title);
+    expect(contents).toContain("Woohoo let's go");
 });
 
-test("blog without author and url is not added", async () => {
-  const newBlog = {
-    title: "hello world",
-  };
-  await api.post("/api/blogs").send(newBlog).expect(400);
-  const response = await api.get("/api/blogs");
+test('blog without author and url is not added', async () => {
+    const newBlog = {
+        title: 'hello world',
+    };
+    await api.post('/api/blogs').send(newBlog).expect(400);
+    const response = await api.get('/api/blogs');
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+    expect(response.body).toHaveLength(initialBlogs.length);
 });
 
-test("blog without title and url is not added", async () => {
-  const newBlog = {
-    author: "hello world",
-  };
-  await api.post("/api/blogs").send(newBlog).expect(400);
-  const response = await api.get("/api/blogs");
+test('blog without title and url is not added', async () => {
+    const newBlog = {
+        author: 'hello world',
+    };
+    await api.post('/api/blogs').send(newBlog).expect(400);
+    const response = await api.get('/api/blogs');
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+    expect(response.body).toHaveLength(initialBlogs.length);
 });
 
-test("blog is added with post", async () => {
-  const newBlog = {
-    title: "hello world",
-    author: "sir stamford raffles",
-    url: "www.raffles.com",
-    likes: 17,
-  };
+test('blog is added with post', async () => {
+    const newBlog = {
+        title: 'hello world',
+        author: 'sir stamford raffles',
+        url: 'www.raffles.com',
+        likes: 17,
+    };
 
-  await api.post("/api/blogs").send(newBlog).expect(200);
-  const response = await api.get("/api/blogs");
-  expect(response.body).toHaveLength(initialBlogs.length + 1);
+    await api.post('/api/blogs').send(newBlog).expect(200);
+    const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(initialBlogs.length + 1);
 });
 
-test("blog without likes is added as default zero", async () => {
-  const newBlog = {
-    title: "hello world",
-    author: "sir stamford raffles",
-    url: "www.raffles.com",
-  };
+test('blog without likes is added as default zero', async () => {
+    const newBlog = {
+        title: 'hello world',
+        author: 'sir stamford raffles',
+        url: 'www.raffles.com',
+    };
 
-  await api.post("/api/blogs").send(newBlog).expect(200);
-  const response = await api.get("/api/blogs");
-  expect(response.body[response.body.length - 1].likes).toBe(0);
+    await api.post('/api/blogs').send(newBlog).expect(200);
+    const response = await api.get('/api/blogs');
+    expect(response.body[response.body.length - 1].likes).toBe(0);
 });
 
-test("blogs have unique id", async () => {
-  const response = await api.get("/api/blogs");
+test('blogs have unique id', async () => {
+    const response = await api.get('/api/blogs');
 
-  for (let blog of response.body) {
-    expect(blog._id).toBeDefined();
-  }
+    for (let blog of response.body) {
+        expect(blog._id).toBeDefined();
+    }
 });
