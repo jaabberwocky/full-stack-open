@@ -1,17 +1,25 @@
 const blogsRouter = require('express').Router();
 const mongoose = require('mongoose');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 const logger = require('../utils/logger');
 
 blogsRouter.get('/', async (request, response) => {
     logger.info(`GET ${request.baseUrl}`);
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate('user').exec();
     response.json(blogs);
 });
 
 blogsRouter.post('/', async (request, response) => {
     logger.info(`POST ${request.baseUrl}`);
-    const blog = new Blog(request.body);
+    const randomUser = await User.findOne({});
+    console.log('Random user found:', randomUser.toJSON());
+    const blogBody = {
+        ...request.body,
+        user: randomUser._id,
+    };
+    const blog = new Blog(blogBody);
+    await blog.populate('user').execPopulate();
 
     if (!blog.title || !blog.author || !blog.url) {
         return response.status(400).send({
@@ -22,7 +30,13 @@ blogsRouter.post('/', async (request, response) => {
     }
 
     const savedBlog = await blog.save();
-    response.json(savedBlog);
+
+    // now add this to the user's blogs array...
+    randomUser.blogs.push(savedBlog._id)
+    await randomUser.save()
+
+    response.json(savedBlog)
+    
 });
 
 blogsRouter.delete('/', async (request, response) => {
@@ -45,7 +59,7 @@ blogsRouter.put('/:id', async (request, response) => {
     console.log('params id:', id);
     const body = request.body;
     // have to use findOne to get ONE doc instead of arr
-    const doc = await Blog.findOne({_id: id}); 
+    const doc = await Blog.findOne({ _id: id });
 
     console.log(doc);
 
@@ -53,11 +67,10 @@ blogsRouter.put('/:id', async (request, response) => {
     doc.title = body.title;
     doc.author = body.author;
     doc.url = body.url;
-    doc.likes = body.likes
+    doc.likes = body.likes;
     await doc.save();
 
     response.json(doc);
-
 });
 
 module.exports = blogsRouter;
