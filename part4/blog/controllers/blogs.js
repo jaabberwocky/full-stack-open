@@ -2,7 +2,17 @@ const blogsRouter = require('express').Router();
 const mongoose = require('mongoose');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
+const { SECRET } = require('../utils/config');
+
+const getTokenFrom = (request) => {
+    const authorization = request.get('authorization');
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        return authorization.substring(7);
+    }
+    return null;
+};
 
 blogsRouter.get('/', async (request, response) => {
     logger.info(`GET ${request.baseUrl}`);
@@ -12,11 +22,25 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
     logger.info(`POST ${request.baseUrl}`);
-    const randomUser = await User.findOne({});
-    console.log('Random user found:', randomUser.toJSON());
+    const body = request.body;
+    const token = getTokenFrom(request);
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, SECRET);
+        if (!token || !decodedToken.id) {
+            return response
+                .status(401)
+                .json({ error: 'token missing or invalid' });
+        }
+    } catch (e) {
+        console.log('Invalid token detected with: ', token);
+        return response.status(401).json({ error: 'incorrect token' });
+    }
+
+    const user = await User.findById(decodedToken.id);
     const blogBody = {
-        ...request.body,
-        user: randomUser._id,
+        ...body,
+        user: user,
     };
     const blog = new Blog(blogBody);
     await blog.populate('user').execPopulate();
@@ -32,11 +56,10 @@ blogsRouter.post('/', async (request, response) => {
     const savedBlog = await blog.save();
 
     // now add this to the user's blogs array...
-    randomUser.blogs.push(savedBlog._id)
-    await randomUser.save()
+    user.blogs.push(savedBlog._id);
+    await user.save();
 
-    response.json(savedBlog)
-    
+    response.json(savedBlog);
 });
 
 blogsRouter.delete('/', async (request, response) => {
