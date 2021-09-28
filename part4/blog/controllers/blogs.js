@@ -50,13 +50,30 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/', async (request, response) => {
     const body = request.body;
+    const token = request.token;
     logger.info(`DELETE ${request.baseUrl} id: ${body._id}`);
+
+    let decodedToken = jwt.verify(token, SECRET);
+
+    // see which user is associated with the blog
+    const requestedBlog = await Blog.findById(body._id);
+    const blogUserId = requestedBlog.user;
+    console.log(`blogId: ${requestedBlog}, blogUserId: ${blogUserId}`);
+
+    if (!token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' });
+    } else if (blogUserId.toString() !== decodedToken.id) {
+        return response
+            .status(401)
+            .json({ error: 'user is not authorised to delete this blog' });
+    }
 
     if (!body._id) {
         return response.status(400).send({
             error: 'missing id',
         });
     }
+
     const id = mongoose.Types.ObjectId(body._id);
     const result = await Blog.deleteOne({ _id: id });
     console.log(`Deleted ${result.n} documents.`);
