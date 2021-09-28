@@ -22,6 +22,7 @@ blogsRouter.post('/', async (request, response) => {
         return response.status(401).json({ error: 'token missing or invalid' });
     }
 
+    // lookup the user from the jwt id
     const user = await User.findById(decodedToken.id);
     const blogBody = {
         ...body,
