@@ -6,14 +6,6 @@ const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 const { SECRET } = require('../utils/config');
 
-const getTokenFrom = (request) => {
-    const authorization = request.get('authorization');
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7);
-    }
-    return null;
-};
-
 blogsRouter.get('/', async (request, response) => {
     logger.info(`GET ${request.baseUrl}`);
     const blogs = await Blog.find({}).populate('user').exec();
@@ -23,18 +15,11 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
     logger.info(`POST ${request.baseUrl}`);
     const body = request.body;
-    const token = getTokenFrom(request);
+    const token = request.token;
     let decodedToken;
-    try {
-        decodedToken = jwt.verify(token, SECRET);
-        if (!token || !decodedToken.id) {
-            return response
-                .status(401)
-                .json({ error: 'token missing or invalid' });
-        }
-    } catch (e) {
-        console.log('Invalid token detected with: ', token);
-        return response.status(401).json({ error: 'incorrect token' });
+    decodedToken = jwt.verify(token, SECRET);
+    if (!token || !decodedToken.id) {
+        return response.status(401).json({ error: 'token missing or invalid' });
     }
 
     const user = await User.findById(decodedToken.id);
