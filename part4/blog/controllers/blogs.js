@@ -1,29 +1,29 @@
 const blogsRouter = require('express').Router();
 const mongoose = require('mongoose');
 const Blog = require('../models/blog');
-const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
-const { SECRET } = require('../utils/config');
 
 blogsRouter.get('/', async (request, response) => {
-    logger.info(`GET ${request.baseUrl}`);
     const blogs = await Blog.find({}).populate('user').exec();
+    logger.info(`GET ${request.baseUrl} || user: ${request.user}`);
     response.json(blogs);
 });
 
 blogsRouter.post('/', async (request, response) => {
-    logger.info(`POST ${request.baseUrl}`);
     const body = request.body;
     const token = request.token;
-    let decodedToken;
-    decodedToken = jwt.verify(token, SECRET);
+    const decodedToken = request.decodedToken;
+    const user = request.user;
+    const username = request.username;
+
+    logger.info(`POST ${request.baseUrl} || user: ${username}`);
+
     if (!token || !decodedToken.id) {
         return response.status(401).json({ error: 'token missing or invalid' });
     }
 
     // lookup the user from the jwt id
-    const user = await User.findById(decodedToken.id);
     const blogBody = {
         ...body,
         user: user,
@@ -51,9 +51,11 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/', async (request, response) => {
     const body = request.body;
     const token = request.token;
-    logger.info(`DELETE ${request.baseUrl} id: ${body._id}`);
+    const decodedToken = request.decodedToken;
+    const user = request.user;
+    const username = request.username;
 
-    let decodedToken = jwt.verify(token, SECRET);
+    logger.info(`DELETE ${request.baseUrl} id: ${body._id} user: ${username}`);
 
     // see which user is associated with the blog
     const requestedBlog = await Blog.findById(body._id);
