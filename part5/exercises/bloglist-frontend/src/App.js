@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -34,18 +34,20 @@ const App = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
+    const [loggedIn, setLoggedIn] = useState(false);
 
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
 
-    const isLoggedIn = useRef(false);
-
     useEffect(() => {
-        if (isLoggedIn.current) {
+        if (loggedIn) {
             blogService.getAll().then((blogs) => setBlogs(blogs));
+            console.log('pulling data');
+        } else {
+            console.log('not pulling data as not logged in');
         }
-    }, [user]);
+    }, [loggedIn]);
 
     useEffect(() => {
         // only runs on first render
@@ -54,9 +56,9 @@ const App = () => {
             window.localStorage.getItem('loggedInBlogUser');
         if (loggedInBlogUser) {
             const user = JSON.parse(loggedInBlogUser);
-            setUser(user);
-            isLoggedIn.current = true;
+            setLoggedIn(true);
             blogService.setToken(user.token);
+            setUser(user);
         }
     }, []);
 
@@ -75,6 +77,7 @@ const App = () => {
             );
             setUser(user);
             blogService.setToken(user.token);
+            setLoggedIn(true);
             // reset to defaults
             setUsername('');
             setPassword('');
@@ -94,7 +97,7 @@ const App = () => {
         console.log('clearing local storage');
         window.localStorage.removeItem('loggedInBlogUser');
         setUser(null);
-        isLoggedIn.current = false;
+        setLoggedIn(false);
     };
 
     const loginForm = () => {
@@ -146,7 +149,6 @@ const App = () => {
             setErrorMessage(null);
             setNotificationType(null);
         }, 5000);
-
     };
 
     const blogForm = () => {

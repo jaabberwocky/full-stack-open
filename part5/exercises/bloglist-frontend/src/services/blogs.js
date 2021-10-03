@@ -23,4 +23,5 @@ const createBlog = async (blogPost) => {
     return request.data;
 };
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, setToken, createBlog };
