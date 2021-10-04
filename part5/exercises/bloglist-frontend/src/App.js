@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import Blog from './components/Blog';
+import { Flex } from './components/Flex';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -153,50 +155,63 @@ const App = () => {
 
     const blogForm = () => {
         return (
-            <React.Fragment>
-                <div>
-                    {user.username} logged in
-                    <button type="button" onClick={handleLogout}>
-                        logout
-                    </button>
-                </div>
-                <BlogsList blogs={blogs} />
-                <div>
-                    <h2>create new</h2>
-                    <form onSubmit={handlePostForm}>
-                        title:
-                        <input
-                            type="text"
-                            value={title}
-                            name="Title"
-                            onChange={({ target }) => setTitle(target.value)}
-                        />
-                        {`\n`}
-                        author:
-                        <input
-                            type="text"
-                            value={author}
-                            name="Author"
-                            onChange={({ target }) => setAuthor(target.value)}
-                        />
-                        {`\n`}
-                        url:
-                        <input
-                            type="text"
-                            value={url}
-                            name="URL"
-                            onChange={({ target }) => setUrl(target.value)}
-                        />
-                        {`\n`}
-                        <button type="submit">create</button>
-                    </form>
-                </div>
-            </React.Fragment>
+            <Flex display="flex" justifyContent="center" flexDirection="column">
+                <Container fluid>
+                    <Row>
+                        <Col xs={4}>{user.username} logged in</Col>
+                        <Col>
+                            <button type="button" onClick={handleLogout}>
+                                logout
+                            </button>
+                        </Col>
+                    </Row>
+                    <Flex
+                        display="flex"
+                        justifyContent="center"
+                        flexDirection="column"
+                    >
+                        <BlogsList blogs={blogs} />
+                    </Flex>
+                    <Row>
+                        <h2>create new</h2>{' '}
+                    </Row>
+                    <Row>
+                        <form onSubmit={handlePostForm}>
+                            title:
+                            <input
+                                type="text"
+                                value={title}
+                                name="Title"
+                                onChange={({ target }) =>
+                                    setTitle(target.value)
+                                }
+                            />
+                            author:
+                            <input
+                                type="text"
+                                value={author}
+                                name="Author"
+                                onChange={({ target }) =>
+                                    setAuthor(target.value)
+                                }
+                            />
+                            url:
+                            <input
+                                type="text"
+                                value={url}
+                                name="URL"
+                                onChange={({ target }) => setUrl(target.value)}
+                            />
+                            <button type="submit">create</button>
+                        </form>
+                    </Row>
+                </Container>
+            </Flex>
         );
     };
 
     return (
-        <div>
+        <Container fluid>
             <h2>blogs</h2>
 
             <NotificationMessage
@@ -204,7 +219,7 @@ const App = () => {
                 notificationType={notificationType}
             />
             {user === null ? loginForm() : blogForm()}
-        </div>
+        </Container>
     );
 };
 
