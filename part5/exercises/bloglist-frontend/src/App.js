@@ -37,6 +37,7 @@ const App = () => {
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
+    const [formVisible, setFormVisible] = useState(false);
 
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
@@ -154,6 +155,9 @@ const App = () => {
     };
 
     const blogForm = () => {
+        const showWhenVisible = { display: formVisible ? '' : 'none' };
+        const showWhenNotVisible = { display: formVisible ? 'none' : '' };
+
         return (
             <Flex display="flex" justifyContent="center" flexDirection="column">
                 <Container fluid>
@@ -176,34 +180,46 @@ const App = () => {
                         <h2>create new</h2>{' '}
                     </Row>
                     <Row>
-                        <form onSubmit={handlePostForm}>
-                            title:
-                            <input
-                                type="text"
-                                value={title}
-                                name="Title"
-                                onChange={({ target }) =>
-                                    setTitle(target.value)
-                                }
-                            />
-                            author:
-                            <input
-                                type="text"
-                                value={author}
-                                name="Author"
-                                onChange={({ target }) =>
-                                    setAuthor(target.value)
-                                }
-                            />
-                            url:
-                            <input
-                                type="text"
-                                value={url}
-                                name="URL"
-                                onChange={({ target }) => setUrl(target.value)}
-                            />
-                            <button type="submit">create</button>
-                        </form>
+                        <div style={showWhenNotVisible}>
+                            <button onClick={() => setFormVisible(true)}>
+                                show form
+                            </button>
+                        </div>
+                        <div style={showWhenVisible}>
+                            <form onSubmit={handlePostForm}>
+                                title:
+                                <input
+                                    type="text"
+                                    value={title}
+                                    name="Title"
+                                    onChange={({ target }) =>
+                                        setTitle(target.value)
+                                    }
+                                />
+                                author:
+                                <input
+                                    type="text"
+                                    value={author}
+                                    name="Author"
+                                    onChange={({ target }) =>
+                                        setAuthor(target.value)
+                                    }
+                                />
+                                url:
+                                <input
+                                    type="text"
+                                    value={url}
+                                    name="URL"
+                                    onChange={({ target }) =>
+                                        setUrl(target.value)
+                                    }
+                                />
+                                <button type="submit">create</button>
+                            </form>
+                            <button onClick={() => setFormVisible(false)}>
+                                hide form
+                            </button>
+                        </div>
                     </Row>
                 </Container>
             </Flex>
