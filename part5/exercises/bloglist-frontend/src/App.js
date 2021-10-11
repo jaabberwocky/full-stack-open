@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Blog from './components/Blog';
+import BlogForm from './components/BlogForm';
 import { Flex } from './components/Flex';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -37,7 +38,6 @@ const App = () => {
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
     const [loggedIn, setLoggedIn] = useState(false);
-    const [formVisible, setFormVisible] = useState(false);
 
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
@@ -103,6 +103,31 @@ const App = () => {
         setLoggedIn(false);
     };
 
+    const handlePostForm = async (event) => {
+        event.preventDefault();
+        const newBlog = {
+            title: title,
+            author: author,
+            url: url,
+        };
+        const resp = await blogService.createBlog(newBlog);
+        console.log(`Post successful: ${JSON.stringify(resp)}`);
+
+        // update state
+        setBlogs([...blogs, resp]);
+        setTitle('');
+        setAuthor('');
+        setUrl('');
+
+        // notification msg
+        setNotificationType('success');
+        setErrorMessage(`${newBlog.title} is added!`);
+        setTimeout(() => {
+            setErrorMessage(null);
+            setNotificationType(null);
+        }, 5000);
+    };
+
     const loginForm = () => {
         return (
             <form onSubmit={handleLogin}>
@@ -129,35 +154,7 @@ const App = () => {
         );
     };
 
-    const handlePostForm = async (event) => {
-        event.preventDefault();
-        const newBlog = {
-            title: title,
-            author: author,
-            url: url,
-        };
-        const resp = await blogService.createBlog(newBlog);
-        console.log(`Post successful: ${JSON.stringify(resp)}`);
-
-        // update state
-        setBlogs([...blogs, resp]);
-        setTitle('');
-        setAuthor('');
-        setUrl('');
-
-        // notification msg
-        setNotificationType('success');
-        setErrorMessage(`${newBlog.title} is added!`);
-        setTimeout(() => {
-            setErrorMessage(null);
-            setNotificationType(null);
-        }, 5000);
-    };
-
     const blogForm = () => {
-        const showWhenVisible = { display: formVisible ? '' : 'none' };
-        const showWhenNotVisible = { display: formVisible ? 'none' : '' };
-
         return (
             <Flex display="flex" justifyContent="center" flexDirection="column">
                 <Container fluid>
@@ -180,46 +177,15 @@ const App = () => {
                         <h2>create new</h2>{' '}
                     </Row>
                     <Row>
-                        <div style={showWhenNotVisible}>
-                            <button onClick={() => setFormVisible(true)}>
-                                show form
-                            </button>
-                        </div>
-                        <div style={showWhenVisible}>
-                            <form onSubmit={handlePostForm}>
-                                title:
-                                <input
-                                    type="text"
-                                    value={title}
-                                    name="Title"
-                                    onChange={({ target }) =>
-                                        setTitle(target.value)
-                                    }
-                                />
-                                author:
-                                <input
-                                    type="text"
-                                    value={author}
-                                    name="Author"
-                                    onChange={({ target }) =>
-                                        setAuthor(target.value)
-                                    }
-                                />
-                                url:
-                                <input
-                                    type="text"
-                                    value={url}
-                                    name="URL"
-                                    onChange={({ target }) =>
-                                        setUrl(target.value)
-                                    }
-                                />
-                                <button type="submit">create</button>
-                            </form>
-                            <button onClick={() => setFormVisible(false)}>
-                                hide form
-                            </button>
-                        </div>
+                        <BlogForm
+                            title={title}
+                            setTitle={setTitle}
+                            handlePostForm={handlePostForm}
+                            url={url}
+                            setUrl={setUrl}
+                            author={author}
+                            setAuthor={setAuthor}
+                        />
                     </Row>
                 </Container>
             </Flex>
