@@ -84,6 +84,7 @@ blogsRouter.delete('/', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
     const id = request.params.id;
+    logger.info(`PUT ${request.baseUrl}`);
     console.log('params id:', id);
     const body = request.body;
     // have to use findOne to get ONE doc instead of arr
