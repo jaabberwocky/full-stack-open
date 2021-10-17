@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
 import blogService from '../services/blogs';
+import PropTypes from 'prop-types';
 
 const Blog = ({ blog, blogs, setBlogs }) => {
     const [visible, setVisible] = useState(false);
@@ -52,5 +53,11 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         </Card>
     );
 };
+
+Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    blogs: PropTypes.array.isRequired,
+    setBlogs: PropTypes.func.isRequired
+}
 
 export default Blog;
