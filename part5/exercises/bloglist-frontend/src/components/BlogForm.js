@@ -10,7 +10,6 @@ const BlogForm = ({
     setUrl,
 }) => {
     const [formVisible, setFormVisible] = useState(false);
-
     const showWhenVisible = { display: formVisible ? '' : 'none' };
     const showWhenNotVisible = { display: formVisible ? 'none' : '' };
 
