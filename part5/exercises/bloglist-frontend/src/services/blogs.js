@@ -40,14 +40,10 @@ const deleteBlog = async (deleteId) => {
     // include this in config.data for it to work
     const config = {
         headers: { Authorization: token },
-        data: { _id: deleteId},
+        data: { _id: deleteId },
     };
-    const request = await axios.delete(
-        baseUrl,
-        config
-    );
+    const request = await axios.delete(baseUrl, config);
     return request.data;
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default { getAll, setToken, createBlog, updateBlog, deleteBlog };

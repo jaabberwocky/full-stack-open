@@ -28,7 +28,7 @@ const Blog = ({ blog, blogs, setBlogs }) => {
             const filteredBlogs = blogs.filter(blog => blog._id !== deleteId);
             setBlogs(filteredBlogs);
         }
-    }
+    };
 
     return (
         <Card style={{ width: '18rem' }}>
@@ -58,6 +58,6 @@ Blog.propTypes = {
     blog: PropTypes.object.isRequired,
     blogs: PropTypes.array.isRequired,
     setBlogs: PropTypes.func.isRequired
-}
+};
 
 export default Blog;

@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const Flex = (props) => (
     <div
         className={props.className}
