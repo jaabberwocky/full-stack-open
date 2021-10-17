@@ -45,7 +45,9 @@ const App = () => {
 
     useEffect(() => {
         if (loggedIn) {
-            blogService.getAll().then((blogs) => setBlogs(blogs));
+            blogService.getAll().then((blogs) => {
+                blogs.sort((a,b) => parseInt(a.likes) - parseInt(b.likes));
+                setBlogs(blogs);});
             console.log('pulling data');
         } else {
             console.log('not pulling data as not logged in');
