@@ -27,9 +27,27 @@ const updateBlog = async (updatedBlog) => {
     const config = {
         headers: { Authorization: token },
     };
-    const request = await axios.put(baseUrl + '/' + updatedBlog._id, updatedBlog, config);
+    const request = await axios.put(
+        baseUrl + '/' + updatedBlog._id,
+        updatedBlog,
+        config
+    );
     return request.data;
-}
+};
+
+const deleteBlog = async (deleteId) => {
+    // delete usually does not have request body
+    // include this in config.data for it to work
+    const config = {
+        headers: { Authorization: token },
+        data: { _id: deleteId},
+    };
+    const request = await axios.delete(
+        baseUrl,
+        config
+    );
+    return request.data;
+};
 
 // eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, setToken, createBlog, updateBlog };
+export default { getAll, setToken, createBlog, updateBlog, deleteBlog };

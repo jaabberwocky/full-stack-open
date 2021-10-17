@@ -20,16 +20,6 @@ const NotificationMessage = ({ msg, notificationType }) => {
     );
 };
 
-const BlogsList = ({ blogs }) => {
-    return (
-        <div>
-            {blogs.map((blog) => (
-                <Blog blog={blog} key={blog._id} />
-            ))}
-        </div>
-    );
-};
-
 const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [errorMessage, setErrorMessage] = useState(null);
@@ -46,8 +36,9 @@ const App = () => {
     useEffect(() => {
         if (loggedIn) {
             blogService.getAll().then((blogs) => {
-                blogs.sort((a,b) => parseInt(a.likes) - parseInt(b.likes));
-                setBlogs(blogs);});
+                blogs.sort((a, b) => parseInt(a.likes) - parseInt(b.likes));
+                setBlogs(blogs);
+            });
             console.log('pulling data');
         } else {
             console.log('not pulling data as not logged in');
@@ -66,6 +57,21 @@ const App = () => {
             setUser(user);
         }
     }, []);
+
+    const BlogsList = ({ blogs }) => {
+        return (
+            <div>
+                {blogs.map((blog) => (
+                    <Blog
+                        blog={blog}
+                        key={blog._id}
+                        blogs={blogs}
+                        setBlogs={setBlogs}
+                    />
+                ))}
+            </div>
+        );
+    };
 
     const handleLogin = async (event) => {
         event.preventDefault();
