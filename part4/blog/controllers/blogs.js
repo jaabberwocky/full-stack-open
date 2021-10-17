@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router();
 const mongoose = require('mongoose');
 const Blog = require('../models/blog');
-const jwt = require('jsonwebtoken');
 const logger = require('../utils/logger');
 
 blogsRouter.get('/', async (request, response) => {
@@ -52,7 +51,6 @@ blogsRouter.delete('/', async (request, response) => {
     const body = request.body;
     const token = request.token;
     const decodedToken = request.decodedToken;
-    const user = request.user;
     const username = request.username;
 
     logger.info(`DELETE ${request.baseUrl} id: ${body._id} user: ${username}`);
